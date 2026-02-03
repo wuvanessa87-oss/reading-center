@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Center</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <div id="loginPage">
+        <div class="login-box">
+            <h1>Reading Center</h1>
+            <p>Your reading companion</p>
+            <input type="text" id="usernameInput" placeholder="Username">
+            <input type="password" id="passwordInput" placeholder="Password">
+            <button id="loginBtn">Login</button>
+            <p class="switch-text">
+                <span id="switchMode">Don't have an account? Register</span>
+            </p>
+        </div>
+    </div>
+
+    <div id="mainApp" style="display: none;">
+        <div class="header">
+            <h1>Reading Center</h1>
+            <div>
+                <span id="userName"></span>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="bookshelf">My Books</button>
+            <button class="tab" data-tab="calendar">Calendar</button>
+            <button class="tab" data-tab="timer">Timer</button>
+        </div>
+
+        <div id="bookshelfTab" class="tab-content active">
+            <div class="section-header">
+                <h2>Categories</h2>
+                <button id="addCategoryBtn">+ Add Category</button>
+            </div>
+            <div id="categoryList"></div>
+        </div>
+
+        <div id="calendarTab" class="tab-content" style="display: none;">
+            <div class="section-header">
+                <h2>Reading Calendar</h2>
+            </div>
+            <div class="calendar-nav">
+                <button id="prevMonth">&lt; Prev</button>
+                <span id="calendarMonth"></span>
+                <button id="nextMonth">Next &gt;</button>
+            </div>
+            <div id="calendarGrid" class="calendar-grid"></div>
+            <div class="stats-summary">
+                <p>Days read this month: <span id="monthCheckins">0</span></p>
+                <p>Current streak: <span id="currentStreak">0</span> days</p>
+            </div>
+        </div>
+
+        <div id="timerTab" class="tab-content" style="display: none;">
+            <div class="timer-section">
+                <h2>Reading Timer</h2>
+                <select id="timerBookSelect">
+                    <option value="">-- Select a book --</option>
+                </select>
+                <div class="timer-display" id="timerDisplay">00:00:00</div>
+                <div class="timer-buttons">
+                    <button id="startBtn">Start</button>
+                    <button id="stopBtn" style="display: none;">Stop</button>
+                </div>
+            </div>
+            <div class="reading-stats">
+                <h3>Reading Stats</h3>
+                <p>Today: <span id="todayTime">00:00:00</span></p>
+                <p>This Month: <span id="monthTime">00:00:00</span></p>
+                <p>This Year: <span id="yearTime">00:00:00</span></p>
+            </div>
+        </div>
+
+        <div id="bookDetail" style="display: none;">
+            <button id="backBtn">← Back</button>
+            <div id="bookInfo"></div>
+
+            <div class="section-header">
+                <h3>Sources</h3>
+                <div>
+                    <button id="addPdfBtn">+ Add PDF</button>
+                    <button id="addPhotoBtn">+ Add Photo</button>
+                </div>
+            </div>
+
+            <div id="pdfSection" style="display: none;">
+                <h4>Search in PDF</h4>
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="Enter keyword...">
+                    <button id="searchBtn">Search</button>
+                </div>
+                <div id="searchResults"></div>
+            </div>
+
+            <h3>All Notes</h3>
+            <div id="noteList"></div>
+        </div>
+    </div>
+
+    <div id="noteModal" class="modal" style="display: none;">
+        <div class="modal-box">
+            <h3>Add Note</h3>
+            <p><strong>Selected text:</strong></p>
+            <div id="selectedText" class="highlight-box"></div>
+            <input type="text" id="noteLocation" placeholder="Location (e.g. Page 42)">
+            <textarea id="noteThoughts" placeholder="Your thoughts..."></textarea>
+            <input type="text" id="noteTags" placeholder="Tags (comma separated)">
+            <div class="modal-buttons">
+                <button id="saveNoteBtn">Save</button>
+                <button id="cancelNoteBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="photoNoteModal" class="modal" style="display: none;">
+        <div class="modal-box">
+            <h3>Add Note for Photo</h3>
+            <p>Photo uploaded! Add a note (optional):</p>
+            <textarea id="photoNoteText" placeholder="Write a note about this photo..."></textarea>
+            <div class="modal-buttons">
+                <button id="savePhotoNoteBtn">Save</button>
+                <button id="skipPhotoNoteBtn">Skip</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reflectionModal" class="modal" style="display: none;">
+        <div class="modal-box">
+            <h3>Reading Reflection</h3>
+            <p>You read for: <span id="reflectionTime"></span></p>
+            <p>Book: <span id="reflectionBook"></span></p>
+            <textarea id="reflectionText" placeholder="Write your thoughts..."></textarea>
+            <div class="modal-buttons">
+                <button id="saveReflectionBtn">Save</button>
+                <button id="skipReflectionBtn">Skip</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="categoryModal" class="modal" style="display: none;">
+        <div class="modal-box">
+            <h3>Add Category</h3>
+            <input type="text" id="categoryNameInput" placeholder="Category name">
+            <div class="modal-buttons">
+                <button id="saveCategoryBtn">Save</button>
+                <button id="cancelCategoryBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookModal" class="modal" style="display: none;">
+        <div class="modal-box">
+            <h3>Add Book</h3>
+            <input type="text" id="bookTitleInput" placeholder="Book title">
+            <input type="text" id="bookAuthorInput" placeholder="Author">
+            <div class="modal-buttons">
+                <button id="saveBookBtn">Save</button>
+                <button id="cancelBookBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="pdfFileInput" accept=".pdf" style="display: none;">
+    <input type="file" id="photoFileInput" accept="image/*" style="display: none;">
+
+    <script src="script.js"></script>
+</body>
+</html>
